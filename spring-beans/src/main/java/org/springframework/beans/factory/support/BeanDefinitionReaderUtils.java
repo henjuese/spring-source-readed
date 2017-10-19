@@ -144,8 +144,10 @@ public class BeanDefinitionReaderUtils {
 			throws BeanDefinitionStoreException {
 
 		// Register bean definition under primary name.
+		//优先使用名字进行注册
 		String beanName = definitionHolder.getBeanName();
 		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
+
 
 		// Register aliases for bean name, if any.
 		String[] aliases = definitionHolder.getAliases();
