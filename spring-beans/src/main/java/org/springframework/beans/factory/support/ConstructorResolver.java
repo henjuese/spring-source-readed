@@ -112,7 +112,7 @@ class ConstructorResolver {
 		if (explicitArgs != null) {
 			argsToUse = explicitArgs;
 		}
-		else {
+		else { //如果getBean方法没有指定则从配置文件中解析
 			Object[] argsToResolve = null;
 			synchronized (mbd.constructorArgumentLock) {
 				constructorToUse = (Constructor<?>) mbd.resolvedConstructorOrFactoryMethod;
@@ -124,11 +124,11 @@ class ConstructorResolver {
 					}
 				}
 			}
-			if (argsToResolve != null) {
+			if (argsToResolve != null) {  //查看缓存中是否存在
 				argsToUse = resolvePreparedArguments(beanName, mbd, bw, constructorToUse, argsToResolve);
 			}
 		}
-
+		//没有被缓存
 		if (constructorToUse == null) {
 			// Need to resolve the constructor.
 			boolean autowiring = (chosenCtors != null ||

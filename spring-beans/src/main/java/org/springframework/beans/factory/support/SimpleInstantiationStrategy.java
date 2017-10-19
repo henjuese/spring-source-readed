@@ -57,14 +57,14 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 
 	@Override
 	public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner) {
-		// Don't override the class with CGLIB if no overrides.
+		//没有override覆盖，则不需要使用CGlib进行动态代理，下面直接反射就OK了
 		if (bd.getMethodOverrides().isEmpty()) {
 			Constructor<?> constructorToUse;
 			synchronized (bd.constructorArgumentLock) {
 				constructorToUse = (Constructor<?>) bd.resolvedConstructorOrFactoryMethod;
 				if (constructorToUse == null) {
 					final Class<?> clazz = bd.getBeanClass();
-					if (clazz.isInterface()) {
+					if (clazz.isInterface()) {  //假如是接口，则直接抛异常，spring管理的是java bean，不能管理接口哦
 						throw new BeanInstantiationException(clazz, "Specified class is an interface");
 					}
 					try {
@@ -76,7 +76,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 								}
 							});
 						}
-						else {
+						else {  //通过反射获取构造函数
 							constructorToUse =	clazz.getDeclaredConstructor((Class[]) null);
 						}
 						bd.resolvedConstructorOrFactoryMethod = constructorToUse;
@@ -85,7 +85,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 						throw new BeanInstantiationException(clazz, "No default constructor found", ex);
 					}
 				}
-			}
+			}   //通过构造函数，实例化对象，返回创建的对象，整个创建bean结束
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {
